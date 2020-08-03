@@ -133,7 +133,7 @@
                     let lat = res.data.coord.lat
                    
 
-                    axios.get(`http://api.openweathermap.org/data/2.5/uvi?appid=1dd25ac798a84daed3b612ef4b3c9a3e&lat=${lat}&lon=${lon}`)
+                    axios.get(`https://api.openweathermap.org/data/2.5/uvi?appid=1dd25ac798a84daed3b612ef4b3c9a3e&lat=${lat}&lon=${lon}`)
                         .then(res => {
                             console.log(res.data)
 

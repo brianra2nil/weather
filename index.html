@@ -1,13 +1,172 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Weather Dashboard</title>
     <link rel="stylesheet" href="app.js">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css"
+        integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
 </head>
 
 <body>
-    
+
+
+
+
+    <div class="container">
+        <div class="row">
+            <div class="col-sm">
+                <div class="jumbotron">
+                    <h1 class="display-4">Weather Dashboard!</h1>
+
+                    <p class="lead">
+                    <form>
+                        <label>Enter City</label>
+                        <input id="input" type="text">
+                        <button id="button">Get Weather</button>
+                    </form>
+                    </p>
+
+                    <hr class="my-4">
+
+
+
+
+
+                    <p>
+                    <h1 class="alert alert-dark" role="alert">Today:</h1>
+                    <p id="result">Type in a city above</p>
+                    </p>
+
+
+                </div>
+
+            </div>
+            <div class="col-sm">
+                <p>
+                <h1 class="alert alert-dark" role="alert">Previous Searches:</h1>
+                <p>Previous City 1</p>
+                </p>
+            </div>
+            <div class="col-sm">
+                <p>
+                <h1 class="alert alert-dark" role="alert">5 Day Forecast:</h1>
+                <p id="forecast">Forecast 1</p>
+                </p>
+            </div>
+        </div>
+    </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"
+        integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj"
+        crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"
+        integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo"
+        crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"
+        integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI"
+        crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.27.0/moment.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
+    <script>
+
+
+        let searches = []
+
+        document.getElementById('button').addEventListener('click', event => {
+            event.preventDefault()
+            console.log('clicked')
+
+            let city = document.getElementById('input').value
+            console.log(city)
+
+            axios.get(`https://api.openweathermap.org/data/2.5/weather?q=${city}&units=imperial&appid=1dd25ac798a84daed3b612ef4b3c9a3e`)
+                .then(res => {
+                    console.log(res.data)
+
+                    let forecast = res.data.list
+
+                    // Set last 4 rows of today's forecast in a left column and set the right column with the corresponding icon
+                    // also set the city & date in 2 columns. Left column city left-aligned, right column date right-aligned
+                    document.getElementById('result').innerHTML = `
+       <div>
+            <h3 id="searchedCity" class="alert alert-primary" role="alert">${res.data.name}</h1>
+            <h3 id="date">${moment().format('l')}</h2>
+        </div>
+<div>
+<p id="today">
+<ul class="list-group">
+  <li id="today-weather">Weather: ${res.data.weather[0].description}</li>
+  <li id="today-temp">Temperature: ${res.data.main.temp}</li>
+  <li id="today-humidity">Humidity: ${res.data.main.humidity}</li>
+  <li id="today-wind">Wind Speed: ${res.data.wind.speed}</li>
+ </ul>
+</p>
+</div>
+`
+                })
+                .catch(err => { console.log(err) })
+
+            axios.get(`https://api.openweathermap.org/data/2.5/forecast?q=${city}&units=imperial&appid=1dd25ac798a84daed3b612ef4b3c9a3e`)
+                .then(res => {
+                    let forecast = res.data.list
+                    // prevents it from duplicating the 5-day forecast if the search button is clicked again (because the loop appends instead of replacing)
+                    document.getElementById('forecast').innerHTML = ''
+
+                    // loop to create the 5-day forecast
+                    for (let i = 5; i < forecast.length; i += 8) {
+                        console.log(forecast[i])
+                        let forecastElem = document.createElement('div')
+                        forecastElem.className = 'class="alert alert-warning" role="alert"'
+                        forecastElem.id = `day${i}`
+                        console.log(forecast[i].weather.description)
+                        console.log(forecast[i].weather.icon)
+                        forecastElem.innerHTML = `
+        <div class="alert alert-warning" role="alert">
+          <h5 id="day${i}-day" class="card-title day${i}-day">${moment(forecast[i].dt_txt).format('dddd')}, ${moment(forecast[i].dt_txt).format('l')}</h5>
+          <h6 id="day${i}-weather" class="card-subtitle mb-2 text-black">Weather: ${forecast[i].weather[0].description}</h6>
+          <div class="card-text">
+            <p id="day${i}-icon" class="text-center"><img src="http://openweathermap.org/img/w/${forecast[i].weather[0].icon}.png"</p>
+            <p id="day${i}-temp">Temperature: ${forecast[i].main.temp}</p>
+            <p id="day${i}-humidity">Humidity: ${forecast[i].main.humidity}</p>
+            <p id="day${i}-wind">Wind Speed: ${forecast[i].wind.speed}</p>
+          </div>
+        </div>
+        `
+
+                        document.getElementById('forecast').append(forecastElem)
+                    }
+                    document.getElementById('5-day').classList.remove('hide')
+                })
+                .catch(err => { console.log(err) })
+        })
+
+
+
+
+
+
+
+    </script>
+
+
 </body>
+
 </html>

@@ -38,6 +38,7 @@
                     <p>
                     <h1 class="alert alert-dark" role="alert">Today:</h1>
                     <p id="result">Type in a city above</p>
+                    <p id="uvIndex"></p>
                     </p>
 
 
@@ -117,12 +118,42 @@
   <li id="today-temp">Temperature: ${res.data.main.temp}</li>
   <li id="today-humidity">Humidity: ${res.data.main.humidity}</li>
   <li id="today-wind">Wind Speed: ${res.data.wind.speed}</li>
+  <li id="today-coordinatesLon">Longitude: ${res.data.coord.lon}</li>
+  <li id="today-coordinatesLat">Latitude: ${res.data.coord.lat}</li>
  </ul>
 </p>
 </div>
 `
+let lon = res.data.coord.lon
+let lat = res.data.coord.lat
+// console.log(lon)
+// console.log(lat)
+
+axios.get(`http://api.openweathermap.org/data/2.5/uvi?appid=1dd25ac798a84daed3b612ef4b3c9a3e&lat=${lat}&lon=${lon}`)
+                .then(res => {
+                    console.log(res.data)
+
+                    event.preventDefault()
+                    let uv = res.data.value
+                    document.getElementById('uvIndex').innerHTML = `
+                    <p> UV Index: ${res.data.value} </p>
+                    `
+                   
+         
+
                 })
                 .catch(err => { console.log(err) })
+
+
+
+
+
+                })
+                .catch(err => { console.log(err) })
+
+
+
+                
 
             axios.get(`https://api.openweathermap.org/data/2.5/forecast?q=${city}&units=imperial&appid=1dd25ac798a84daed3b612ef4b3c9a3e`)
                 .then(res => {
@@ -132,12 +163,11 @@
 
                     // loop to create the 5-day forecast
                     for (let i = 5; i < forecast.length; i += 8) {
-                        console.log(forecast[i])
+                      
                         let forecastElem = document.createElement('div')
                         forecastElem.className = 'class="alert alert-warning" role="alert"'
                         forecastElem.id = `day${i}`
-                        console.log(forecast[i].weather.description)
-                        console.log(forecast[i].weather.icon)
+                   
                         forecastElem.innerHTML = `
         <div class="alert alert-warning" role="alert">
           <h5 id="day${i}-day" class="card-title day${i}-day">${moment(forecast[i].dt_txt).format('dddd')}, ${moment(forecast[i].dt_txt).format('l')}</h5>
@@ -149,11 +179,13 @@
             <p id="day${i}-wind">Wind Speed: ${forecast[i].wind.speed}</p>
           </div>
         </div>
+        <p> </p>
         `
+        
 
                         document.getElementById('forecast').append(forecastElem)
                     }
-                    document.getElementById('5-day').classList.remove('hide')
+                   
                 })
                 .catch(err => { console.log(err) })
         })
@@ -170,3 +202,12 @@
 </body>
 
 </html>
+
+
+
+<!-- 
+document.getElementById('button').addEventListener('click', event => {
+    event.preventDefault()
+
+let lon = res.data.coord.lon
+let lat = res.data.coord.lat -->

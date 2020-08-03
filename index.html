@@ -110,8 +110,7 @@
 
                     let forecast = res.data.list
 
-                    // Set last 4 rows of today's forecast in a left column and set the right column with the corresponding icon
-                    // also set the city & date in 2 columns. Left column city left-aligned, right column date right-aligned
+                   
                     document.getElementById('result').innerHTML = `
        <div>
             <h3 id="searchedCity" class="alert alert-primary" role="alert">${res.data.name}</h1>
@@ -132,8 +131,7 @@
 `
                     let lon = res.data.coord.lon
                     let lat = res.data.coord.lat
-                    // console.log(lon)
-                    // console.log(lat)
+                   
 
                     axios.get(`http://api.openweathermap.org/data/2.5/uvi?appid=1dd25ac798a84daed3b612ef4b3c9a3e&lat=${lat}&lon=${lon}`)
                         .then(res => {
@@ -168,10 +166,10 @@
             axios.get(`https://api.openweathermap.org/data/2.5/forecast?q=${city}&units=imperial&appid=1dd25ac798a84daed3b612ef4b3c9a3e`)
                 .then(res => {
                     let forecast = res.data.list
-                    // prevents it from duplicating the 5-day forecast if the search button is clicked again (because the loop appends instead of replacing)
+                   
                     document.getElementById('forecast').innerHTML = ''
 
-                    // loop to create the 5-day forecast
+           
                     for (let i = 5; i < forecast.length; i += 8) {
 
                         let forecastElem = document.createElement('div')

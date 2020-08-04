@@ -39,10 +39,13 @@
                     <h1 class="alert alert-dark" role="alert">Today:</h1>
                     <p id="result">Type in a city above</p>
                     <p id="uvIndex">
-                        <p>UV Index Results:</p>
-                       <p> Light = 0-2</p>
-                       <p>Moderate = 3-5</p>
-                       <p>High = 5+</p>
+
+                
+                        <h4>UV Index Color Code:</h4>
+                        
+                       <p id="green"> Light = 0-2</p>
+                       <p id="yellow">Moderate = 3-5</p>
+                       <p id="red">High = 5+</p>
                     </p>
                     </p>
 
@@ -53,7 +56,7 @@
             <div class="col-sm">
                 <p>
                 <h1 class="alert alert-dark" role="alert">Previous Searches:</h1>
-                <p>Previous City 1</p>
+                <p id="previous"> Click for data:</p>
                 </p>
             </div>
             <div class="col-sm">
@@ -93,9 +96,25 @@
 
     <script>
 
+document.getElementById("green").style.backgroundColor = "green"
+document.getElementById("yellow").style.backgroundColor = "yellow"
+document.getElementById("red").style.backgroundColor = "red"
 
-        let searches = []
+
+        let searches = JSON.parse(localStorage.getItem('searches')) || []
         let uvResulter = 0
+
+
+       
+        for (let i = 0; i< searches.length; i++) {
+            let itemElem = document.createElement('li')
+            itemElem.className = 'resultCity'
+            itemElem.innerHTML = `
+            ${searches[i].text}
+            `
+            document.getElementById('previous').append(itemElem)
+
+        }
 
         document.getElementById('button').addEventListener('click', event => {
             event.preventDefault()
@@ -103,6 +122,19 @@
 
             let city = document.getElementById('input').value
             console.log(city)
+
+            let cityObj = {
+                        text: city
+                    }
+                    searches.push(cityObj)
+                    localStorage.setItem('searches', JSON.stringify(searches))
+
+                    document.getElementById('previous').append(city)
+                    // location.reload()
+
+                    
+
+          
 
             axios.get(`https://api.openweathermap.org/data/2.5/weather?q=${city}&units=imperial&appid=1dd25ac798a84daed3b612ef4b3c9a3e`)
                 .then(res => {
@@ -141,11 +173,23 @@
                             let uv = res.data.value
                             uvResulter = uv
                             document.getElementById('uvIndex').innerHTML = `
-                    <p> UV Index: ${res.data.value} </p>
+                           
+                            <div>
+<p id="today">
+<ul class="list-group">
+  <li id="today-weather">UV Index: ${res.data.value}</li>
+ 
+ </ul>
+</p>
+</div>
+
+                   
                     `
                             if (uv >= 0 && uv <= 2) { document.getElementById("uvIndex").style.backgroundColor = "green" }
                             else if (uv >= 3 && uv <= 5) { document.getElementById("uvIndex").style.backgroundColor = "yellow" }
                             else { document.getElementById("uvIndex").style.backgroundColor = "red" }
+
+                  
 
 
 

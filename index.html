@@ -56,7 +56,7 @@
             <div class="col-sm">
                 <p>
                 <h1 class="alert alert-dark" role="alert">Previous Searches:</h1>
-                <p id="previous"> Click for data:</p>
+                <p id="previous"> </p>
                 </p>
             </div>
             <div class="col-sm">
@@ -119,6 +119,7 @@ document.getElementById("red").style.backgroundColor = "red"
         document.getElementById('button').addEventListener('click', event => {
             event.preventDefault()
             console.log('clicked')
+            
 
             let city = document.getElementById('input').value
             console.log(city)
@@ -129,7 +130,19 @@ document.getElementById("red").style.backgroundColor = "red"
                     searches.push(cityObj)
                     localStorage.setItem('searches', JSON.stringify(searches))
 
-                    document.getElementById('previous').append(city)
+                    let itemElem = document.createElement('li')
+            itemElem.className = 'resultCity'
+            itemElem.innerHTML = `
+            ${city}
+            `
+            document.getElementById('previous').append(itemElem)
+
+
+                    // let prev = JSON.parse(localStorage.getItem('searches'))
+                    // document.getElementById('previous').innerHTML = `
+                    // <li> ${prev} </li>
+                    // `
+                   
                     // location.reload()
 
                     
